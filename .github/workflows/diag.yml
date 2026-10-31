@@ -1,0 +1,24 @@
+name: diag scope
+on: workflow_dispatch
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            for (const n of [1, 3]) {
+              try {
+                const r = await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: n, body: 'scope probe ' + n,
+                });
+                console.log('comment on', n, '->', r.status);
+              } catch (e) {
+                console.log('comment on', n, '-> ERR', e.status, e.message);
+              }
+            }
