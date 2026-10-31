@@ -12,17 +12,12 @@ jobs:
       - name: "Simulate semver check"
         run: |
           echo "checking semver"
-          # attacker-crafted artifact: a zip that contains the file 'semver-break'
-          # holding an arbitrary PR number chosen by the attacker
-          mkdir -p out
-          rm -rf work && mkdir work && cd work
+          # attacker-controlled artifact: the PR number the privileged
+          # workflow_run workflow will comment on and label is chosen here
           echo -n 1 > semver-break
-          zip -q semver-break.zip semver-break
-          mv semver-break.zip ../out/semver-break.zip
-          cd ..
-          ls -l out
+          ls -l semver-break
       - name: "Save breaking state"
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: semver-break
-          path: out/semver-break.zip
+          path: semver-break
